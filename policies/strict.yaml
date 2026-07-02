@@ -1,0 +1,17 @@
+name: strict
+block_risk_at: medium
+network_policy: deny
+protected_paths:
+  - .env
+  - .env.*
+  - ~/.ssh/*
+  - id_rsa
+  - id_ed25519
+  - credentials
+  - token
+  - secret
+  - infra/production/*
+allowed_commands:
+  - python3 -m compileall *
+  - PYTHONPATH=src python3 -m unittest *
+

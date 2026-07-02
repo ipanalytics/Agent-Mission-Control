@@ -1,0 +1,17 @@
+name: default
+block_risk_at: critical
+network_policy: deny-by-default
+protected_paths:
+  - .env
+  - .env.*
+  - ~/.ssh/*
+  - id_rsa
+  - id_ed25519
+  - credentials
+  - token
+  - secret
+allowed_commands:
+  - python3 -m compileall *
+  - PYTHONPATH=src python3 -m unittest *
+  - python3 -m agent_mission_control *
+

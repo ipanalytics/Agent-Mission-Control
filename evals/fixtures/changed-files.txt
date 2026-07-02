@@ -1,0 +1,4 @@
+src/agent_mission_control/cli.py
+docs/out-of-scope.md
+.env
+

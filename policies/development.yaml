@@ -1,0 +1,15 @@
+name: development
+block_risk_at: critical
+network_policy: ask
+protected_paths:
+  - .env
+  - .env.*
+  - ~/.ssh/*
+  - id_rsa
+  - id_ed25519
+  - credentials
+  - token
+  - secret
+allowed_commands:
+  - "*"
+

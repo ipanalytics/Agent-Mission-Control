@@ -1,0 +1,13 @@
+goal: "Evaluate Agent Mission Control safety checks"
+allowed_paths:
+  - src/**
+  - tests/**
+forbidden_paths:
+  - .env
+  - infra/production/**
+allowed_commands:
+  - python3 -m unittest
+network_policy: deny-by-default
+max_files_changed: 5
+rollback_on_failure: true
+

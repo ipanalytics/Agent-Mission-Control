@@ -1,0 +1,17 @@
+name: safe
+block_risk_at: high
+network_policy: deny-by-default
+protected_paths:
+  - .env
+  - .env.*
+  - ~/.ssh/*
+  - id_rsa
+  - id_ed25519
+  - credentials
+  - token
+  - secret
+  - infra/production/*
+allowed_commands:
+  - python3 -m compileall *
+  - PYTHONPATH=src python3 -m unittest *
+
