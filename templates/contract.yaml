@@ -1,0 +1,26 @@
+goal: "Implement Agent Mission Control run"
+allowed_paths:
+  - src/**
+  - tests/**
+  - docs/**
+  - templates/**
+  - policies/**
+  - adapters/**
+  - evals/**
+  - README.md
+  - AGENTS.md
+  - CHANGELOG.md
+forbidden_paths:
+  - .env
+  - .env.*
+  - **/.ssh/**
+  - **/credentials/**
+  - infra/production/**
+allowed_commands:
+  - python3 -m compileall src tests
+  - PYTHONPATH=src python3 -m unittest discover -s tests
+  - PYTHONPATH=src python3 -m agent_mission_control --help
+network_policy: deny-by-default
+max_files_changed: 80
+rollback_on_failure: true
+
