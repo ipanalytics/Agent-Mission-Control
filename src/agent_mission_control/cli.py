@@ -83,8 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     agent = subparsers.add_parser("agent", help="Install agent-host instruction files")
     agent_sub = agent.add_subparsers(dest="agent_command")
-    bootstrap = agent_sub.add_parser("bootstrap", help="Write AGENTS.md and/or CLAUDE.md")
-    bootstrap.add_argument("--target", choices=["codex", "claude", "both"], default="both")
+    bootstrap = agent_sub.add_parser("bootstrap", help="Write agent-host instruction files")
+    bootstrap.add_argument("--target", choices=["codex", "claude", "hermes", "both"], default="both")
     bootstrap.add_argument("--root", default=".")
     bootstrap.add_argument("--force", action="store_true")
     return parser

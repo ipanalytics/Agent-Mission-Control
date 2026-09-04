@@ -33,3 +33,4 @@ PYTHONPATH=src python3 -m agent_mission_control mission replay /private/tmp/amc-
 Claude Code reads `CLAUDE.md` from the repository. Keep task-specific details in
 the mission contract and use this file for stable project rules.
 
+Hermes uses the same contract and evidence model through `HERMES.md`.

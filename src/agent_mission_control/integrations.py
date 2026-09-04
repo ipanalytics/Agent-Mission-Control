@@ -65,22 +65,32 @@ the mission contract and use this file for stable project rules.
 """
 
 
+HERMES_NOTES = """\
+## Hermes Notes
+
+Hermes reads `HERMES.md` as the local runbook for machine-side execution. Use it
+to keep repeated Hermes tasks on the same contract, evidence, and review path.
+"""
+
+
 def integration_files(target: str, root: str | Path = ".") -> list[IntegrationFile]:
     """Return the host instruction files needed for the selected target."""
 
     root_path = Path(root)
-    if target not in {"codex", "claude", "both"}:
-        raise IntegrationError("target must be one of: codex, claude, both")
+    if target not in {"codex", "claude", "hermes", "both"}:
+        raise IntegrationError("target must be one of: codex, claude, hermes, both")
     files: list[IntegrationFile] = []
     if target in {"codex", "both"}:
         files.append(IntegrationFile(root_path / "AGENTS.md", COMMON_RULES + "\n" + CODEX_NOTES))
     if target in {"claude", "both"}:
         files.append(IntegrationFile(root_path / "CLAUDE.md", COMMON_RULES + "\n" + CLAUDE_NOTES))
+    if target in {"hermes", "both"}:
+        files.append(IntegrationFile(root_path / "HERMES.md", COMMON_RULES + "\n" + HERMES_NOTES))
     return files
 
 
 def bootstrap_agent_files(target: str = "both", root: str | Path = ".", force: bool = False) -> list[Path]:
-    """Write Codex and/or Claude Code instruction files into a repository."""
+    """Write Codex, Claude Code, and/or Hermes instruction files into a repository."""
 
     Path(root).mkdir(parents=True, exist_ok=True)
     written: list[Path] = []

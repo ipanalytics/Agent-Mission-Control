@@ -30,11 +30,20 @@ PYTHONPATH=src python3 -m agent_mission_control command risk --policy policies/d
 | `evals/fixtures/commands.txt` | one low-risk command, one critical-risk command |
 | `evals/scenarios/basic-contract.yaml` | small contract for scope and risk demonstrations |
 
-## Codex and Claude Code Setup
+## Codex, Claude Code, and Hermes Setup
 
 ```bash
 amc agent bootstrap --target codex --root .
 amc agent bootstrap --target claude --root .
+amc agent bootstrap --target hermes --root .
 ```
 
-Use `--target both` when a repository is shared by both hosts.
+Use `--target both` when a repository is shared by all supported hosts.
+
+Hermes goal-style prompt:
+
+```text
+Follow HERMES.md. Execute the task in templates/contract.yaml.
+Stay inside allowed paths. Record command evidence, run scope check,
+write final report, and replay the run before completion.
+```

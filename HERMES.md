@@ -1,6 +1,6 @@
 # Agent Mission Control Runbook
 
-This repository uses Agent Mission Control for contract-scoped agent work.
+This repository uses Agent Mission Control for contract-scoped Hermes work.
 
 ## Standard Checks
 
@@ -19,7 +19,15 @@ This repository uses Agent Mission Control for contract-scoped agent work.
 - Classify risky commands with `command risk`; do not execute remote installer pipelines.
 - Do not read `.env`, SSH keys, credential files, or production secret material.
 
-## Useful Commands
+## Hermes Workflow
+
+Use Hermes as the executor and Agent Mission Control as the review boundary:
+
+```text
+task -> contract.yaml -> Hermes execution -> evidence -> report final -> mission replay
+```
+
+Recommended command sequence:
 
 ```bash
 PYTHONPATH=src python3 -m agent_mission_control mission init --contract templates/contract.yaml --root /private/tmp/amc-smoke
@@ -28,9 +36,10 @@ PYTHONPATH=src python3 -m agent_mission_control report final /private/tmp/amc-sm
 PYTHONPATH=src python3 -m agent_mission_control mission replay /private/tmp/amc-smoke/.mission-control/runs
 ```
 
-## Codex Notes
+For goal-style work, keep the goal short and keep the task boundary in the contract:
 
-Codex reads `AGENTS.md` from the repository. Keep this file short and operational:
-commands to run, files to protect, and the expected evidence path.
+```text
+Execute the task in templates/contract.yaml. Keep changes inside allowed paths.
+Record command evidence, run scope check, write final report, and replay the run.
+```
 
-Hermes uses the same contract and evidence model through `HERMES.md`.

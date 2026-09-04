@@ -30,8 +30,22 @@ class CLITests(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertTrue((Path(tmp) / "AGENTS.md").exists())
             self.assertTrue((Path(tmp) / "CLAUDE.md").exists())
+            self.assertTrue((Path(tmp) / "HERMES.md").exists())
             self.assertIn("AGENTS.md", buffer.getvalue())
             self.assertIn("CLAUDE.md", buffer.getvalue())
+            self.assertIn("HERMES.md", buffer.getvalue())
+
+    def test_agent_bootstrap_writes_hermes_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            buffer = io.StringIO()
+            with redirect_stdout(buffer):
+                code = main(["agent", "bootstrap", "--target", "hermes", "--root", tmp])
+            self.assertEqual(code, 0)
+            self.assertFalse((Path(tmp) / "AGENTS.md").exists())
+            self.assertFalse((Path(tmp) / "CLAUDE.md").exists())
+            hermes = Path(tmp) / "HERMES.md"
+            self.assertTrue(hermes.exists())
+            self.assertIn("Hermes reads `HERMES.md`", hermes.read_text(encoding="utf-8"))
 
     def test_agent_bootstrap_refuses_overwrite_without_force(self):
         with tempfile.TemporaryDirectory() as tmp:

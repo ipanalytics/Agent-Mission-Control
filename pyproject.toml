@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agent-mission-control"
 version = "1.0.0"
-description = "A local control plane for contract-scoped autonomous coding runs."
+description = "A local control plane for contract-scoped Codex, Claude Code, and Hermes runs."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -17,4 +17,3 @@ amc = "agent_mission_control.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

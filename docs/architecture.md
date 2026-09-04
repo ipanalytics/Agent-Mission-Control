@@ -60,7 +60,7 @@ Nested mappings and anchors are not supported in 1.0. Use the included templates
 
 Core commands:
 
-- `agent bootstrap --target <codex|claude|both> --root <path>`
+- `agent bootstrap --target <codex|claude|hermes|both> --root <path>`
 - `contract validate <path>`
 - `mission init --contract <path> --root <path>`
 - `scope check --contract <path> --changed-files <manifest>`

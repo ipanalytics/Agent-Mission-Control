@@ -1,6 +1,8 @@
 # Agent Mission Control
 
-
+<p align="center">
+  <img src="./site/banner.svg" alt="Agent Mission Control banner" width="100%">
+</p>
 
 <p align="center">
   <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
@@ -24,6 +26,7 @@ Agent Mission Control is a local control plane for autonomous coding runs. It tu
 | [Examples](./docs/examples.md) | Local smoke workflow and eval fixtures |
 | [Codex adapter](./adapters/codex.md) | Codex bootstrap and review workflow |
 | [Claude Code adapter](./adapters/claude-code.md) | Claude Code bootstrap and review workflow |
+| [Hermes adapter](./adapters/hermes.md) | Hermes bootstrap and goal-style execution workflow |
 
 ## Overview
 
@@ -60,6 +63,23 @@ replay       ->  chronological run summary
 
 The contract is the source of truth. It defines the goal, allowed paths, forbidden paths, allowed commands, network posture, file-change limits, and rollback expectations. The CLI evaluates actual changes and commands against that contract and records the result as evidence.
 
+## Phase Planning For Agents
+
+Agent Mission Control gives Codex, Claude Code, and Hermes the same operating shape:
+
+```text
+short goal
+  -> contract.yaml
+  -> phase plan
+  -> agent execution
+  -> scope check
+  -> evidence
+  -> final report
+  -> replay
+```
+
+Hermes is the executor for machine-side work. Agent Mission Control keeps the run understandable: what was allowed, what changed, which commands were reviewed, and where the evidence lives.
+
 ## Features
 
 | Area | Capability |
@@ -91,6 +111,7 @@ This creates the files agent hosts already know how to read:
 |---|---|---|
 | `AGENTS.md` | Codex | Repository runbook and safety rules |
 | `CLAUDE.md` | Claude Code | Repository runbook and safety rules |
+| `HERMES.md` | Hermes | Goal-style execution runbook and review path |
 
 ### Local Smoke Run
 
@@ -236,6 +257,7 @@ Mission artifacts are plain files. They can be archived, attached to a pull requ
 | `pr-summary.md` | Markdown | Pull-request-ready summary and checklist |
 | `AGENTS.md` | Markdown | Codex repository instructions |
 | `CLAUDE.md` | Markdown | Claude Code repository instructions |
+| `HERMES.md` | Markdown | Hermes repository instructions |
 
 ## Data Formats
 
@@ -300,6 +322,7 @@ Hosted services, kernel sandboxing, remote execution, policy signing, and direct
 
 - Review evidence from autonomous coding runs.
 - Gate agent changes against allowed and forbidden paths.
+- Give Hermes a goal-style repository runbook backed by contract and evidence files.
 - Flag unsafe shell commands before they are normalized into run history.
 - Produce PR summaries for security or infrastructure review.
 - Build internal evals for agent scope control.
@@ -320,7 +343,7 @@ Hosted services, kernel sandboxing, remote execution, policy signing, and direct
   tests/                       # unittest regression suite
   templates/                   # contract and report templates
   policies/                    # default, safe, strict, development policies
-  adapters/                    # Codex and Claude Code workflow notes
+  adapters/                    # Codex, Claude Code, and Hermes workflow notes
   evals/                       # scenarios and fixtures
   docs/                        # architecture, safety model, examples, roadmap
 ```
