@@ -47,6 +47,21 @@ class CLITests(unittest.TestCase):
             self.assertTrue(hermes.exists())
             self.assertIn("Hermes reads `HERMES.md`", hermes.read_text(encoding="utf-8"))
 
+    def test_plan_create_and_goal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run_out = io.StringIO()
+            with redirect_stdout(run_out):
+                self.assertEqual(main(["mission", "init", "--contract", "templates/contract.yaml", "--root", tmp]), 0)
+            runs_root = str(Path(run_out.getvalue().strip()).parent)
+            plan_out = io.StringIO()
+            with redirect_stdout(plan_out):
+                self.assertEqual(main(["plan", "create", runs_root]), 0)
+            self.assertIn("PROTOCOL.md", plan_out.getvalue())
+            goal_out = io.StringIO()
+            with redirect_stdout(goal_out):
+                self.assertEqual(main(["plan", "goal", runs_root]), 0)
+            self.assertIn("complete every phase", goal_out.getvalue())
+
     def test_agent_bootstrap_refuses_overwrite_without_force(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

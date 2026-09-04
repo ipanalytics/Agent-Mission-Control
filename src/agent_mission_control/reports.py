@@ -45,7 +45,13 @@ def final_report(run_dir: str | Path) -> Path:
     scope_ledger = _load_json(resolved / "evidence" / "scope-ledger.json", {})
     command_evidence = read_command_evidence(resolved)
     events = read_events(resolved)
+    phase_files = sorted((resolved / "phases").glob("phase-*.md"))
+    protocol_exists = (resolved / "PROTOCOL.md").exists()
     warnings: list[str] = []
+    if not protocol_exists:
+        warnings.append("protocol missing")
+    if not phase_files:
+        warnings.append("phase plan missing")
     if not scope_ledger:
         warnings.append("scope ledger missing")
     if not command_evidence:
@@ -73,6 +79,8 @@ def final_report(run_dir: str | Path) -> Path:
         f"- Changed files: {changed_count}",
         f"- Scope violations: {len(violations)}",
         f"- Highest command risk: {highest_risk}",
+        f"- Phase files: {len(phase_files)}",
+        f"- Protocol: {'present' if protocol_exists else 'missing'}",
         f"- Events recorded: {len(events)}",
     ]
     if warnings:
@@ -122,4 +130,3 @@ def pr_summary(
     path = resolved / "pr-summary.md"
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
-

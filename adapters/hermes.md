@@ -9,6 +9,8 @@ scope checks, command-risk checks, evidence files, reports, and replay path.
 amc agent bootstrap --target hermes --root .
 amc contract validate templates/contract.yaml
 amc mission init --contract templates/contract.yaml --root /private/tmp/amc-smoke
+amc plan create /private/tmp/amc-smoke/.mission-control/runs
+amc plan goal /private/tmp/amc-smoke/.mission-control/runs
 ```
 
 For repositories shared by Codex, Claude Code, and Hermes:
@@ -40,6 +42,5 @@ Record command evidence, run scope check, generate final report, and replay the 
 | Layer | Responsibility |
 |---|---|
 | Hermes | Executes repository, terminal, desktop, and MCP tasks |
-| Agent Mission Control | Defines scope, records evidence, checks commands, writes reports |
+| Agent Mission Control | Defines scope, writes phase plans, records evidence, checks commands, writes reports |
 | Human review | Approves the final diff and operational impact |
-

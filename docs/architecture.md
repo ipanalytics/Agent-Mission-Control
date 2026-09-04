@@ -1,10 +1,11 @@
 # Architecture
 
-Agent Mission Control is organized around a mission run. A run is a durable directory containing the contract, plan, state, events, evidence, verifier output, and final report.
+Agent Mission Control is organized around a mission run. A run is a durable directory containing the contract, phase plan, protocol, state, events, evidence, verifier output, and final report.
 
 ## Components
 
 - Planner: turns a user request into a contract-aware plan.
+- Protocol writer: creates host-neutral instructions for long-running Codex, Claude Code, and Hermes execution.
 - Builder: performs scoped implementation work.
 - Scope checker: compares actual file changes against the contract.
 - Command risk engine: classifies commands before and after execution.
@@ -45,6 +46,23 @@ Every claim in the final report should point back to evidence:
 - External calls were made: requests and responses are summarized.
 - Risk was low: command classifications are logged.
 
+## Phase Planning
+
+`amc plan create` writes the execution plan into the run directory:
+
+```text
+PROTOCOL.md
+goal.txt
+phases/
+  phase-01.md
+  phase-02.md
+  phase-03.md
+  phase-04.md
+  phase-05.md
+```
+
+The protocol is host-neutral. Codex, Claude Code, and Hermes all receive the same short goal string from `amc plan goal`; the detailed work lives in files so the agent can run for longer without depending on an oversized prompt.
+
 ## YAML Subset
 
 Agent Mission Control 1.0 uses a dependency-free YAML subset for contracts and policies:
@@ -63,6 +81,9 @@ Core commands:
 - `agent bootstrap --target <codex|claude|hermes|both> --root <path>`
 - `contract validate <path>`
 - `mission init --contract <path> --root <path>`
+- `plan create <run-dir>`
+- `plan goal <run-dir>`
+- `plan status <run-dir>`
 - `scope check --contract <path> --changed-files <manifest>`
 - `command risk --policy <path> <command>`
 - `evidence add-command <run-dir>`

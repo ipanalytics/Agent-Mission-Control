@@ -54,6 +54,7 @@ mission init  ->  .mission-control/runs/<run-id>/
     +-- phases/
     |
     v
+plan create   ->  PROTOCOL.md + phases/phase-*.md + goal.txt
 scope check  ->  scope-ledger.json
 command risk ->  command risk decision
 evidence     ->  command-evidence.jsonl
@@ -80,6 +81,16 @@ short goal
 
 Hermes is the executor for machine-side work. Agent Mission Control keeps the run understandable: what was allowed, what changed, which commands were reviewed, and where the evidence lives.
 
+For longer work, the planner writes a protocol instead of relying on a long prompt:
+
+```bash
+amc mission init --contract templates/contract.yaml --root /private/tmp/amc
+amc plan create /private/tmp/amc/.mission-control/runs
+amc plan goal /private/tmp/amc/.mission-control/runs
+```
+
+The goal output is short enough to paste into Codex, Claude Code, or Hermes. The detailed work stays in `PROTOCOL.md` and `phases/phase-*.md`.
+
 ## Features
 
 | Area | Capability |
@@ -88,6 +99,7 @@ Hermes is the executor for machine-side work. Agent Mission Control keeps the ru
 | Policies | Default, safe, strict, and development command policies |
 | Scope ledger | Classify changed files as allowed, forbidden, or out-of-scope |
 | Command risk | Detect remote shell execution, protected file reads, package operations, network-capable commands, and destructive filesystem patterns |
+| Phase planning | Generate phase specs, an execution protocol, and a short autonomous goal prompt |
 | Evidence | Record command, exit code, output path, timestamp, and risk summary |
 | Reporting | Generate final mission reports and PR summaries with safety score |
 | Replay | Reconstruct a mission from state, events, evidence, scope, and report artifacts |
@@ -125,6 +137,10 @@ PYTHONPATH=src python3 -m agent_mission_control contract validate templates/cont
 PYTHONPATH=src python3 -m agent_mission_control mission init \
   --contract templates/contract.yaml \
   --root /private/tmp/amc-smoke
+PYTHONPATH=src python3 -m agent_mission_control plan create \
+  /private/tmp/amc-smoke/.mission-control/runs
+PYTHONPATH=src python3 -m agent_mission_control plan goal \
+  /private/tmp/amc-smoke/.mission-control/runs
 ```
 
 Generate scope, evidence, reports, and replay output:
@@ -204,6 +220,16 @@ amc scope check \
 
 The included fixture produces one allowed file, one forbidden file, and one out-of-scope file. The command exits non-zero when violations are present.
 
+### Create An Agent Plan
+
+```bash
+amc plan create /tmp/amc/.mission-control/runs
+amc plan status /tmp/amc/.mission-control/runs
+amc plan goal /tmp/amc/.mission-control/runs
+```
+
+The planner writes `PROTOCOL.md`, `goal.txt`, and five default phase specs: recon, execution plan, scoped implementation, verification, and final audit.
+
 ### Classify Command Risk
 
 ```bash
@@ -236,6 +262,8 @@ Mission artifacts are plain files. They can be archived, attached to a pull requ
   contract.yaml
   state.json
   events.jsonl
+  PROTOCOL.md
+  goal.txt
   evidence/
     command-evidence.jsonl
     commands/
@@ -251,6 +279,9 @@ Mission artifacts are plain files. They can be archived, attached to a pull requ
 | `contract.yaml` | YAML subset | Mission goal, scope, command, and network policy |
 | `state.json` | JSON | Run id, status, phase, baseline ref, contract summary |
 | `events.jsonl` | JSON Lines | Append-only run timeline |
+| `PROTOCOL.md` | Markdown | Long-running agent control loop |
+| `goal.txt` | Text | Short goal prompt for Codex, Claude Code, or Hermes |
+| `phases/phase-*.md` | Markdown | Phase objectives, checks, and evidence requirements |
 | `scope-ledger.json` | JSON | Allowed, forbidden, out-of-scope files and violations |
 | `command-evidence.jsonl` | JSON Lines | Command execution evidence and risk summary |
 | `final-report.md` | Markdown | Reviewable report with safety score |
@@ -307,6 +338,8 @@ Agent Mission Control 1.0 supports a dependency-free YAML subset: top-level mapp
 Agent Mission Control 1.0 covers local mission orchestration primitives:
 
 - task contracts;
+- phase planning;
+- host-neutral execution protocols;
 - policy presets;
 - scope checking;
 - command-risk classification;
@@ -357,6 +390,7 @@ Hosted services, kernel sandboxing, remote execution, policy signing, and direct
 | `policy.py` | Policy model and loading |
 | `scope.py` | Changed-file classification and ledgers |
 | `command_risk.py` | Command risk taxonomy and decisions |
+| `planning.py` | Phase plans, protocol files, and autonomous goal prompts |
 | `runs.py` | Run directory creation and resolution |
 | `events.py` | JSONL event append/read helpers |
 | `evidence.py` | Command evidence recording |
@@ -382,6 +416,7 @@ amc contract validate templates/contract.yaml
 ```bash
 python3 -m pip install -e .
 amc scope check --contract templates/contract.yaml --changed-files changed-files.txt
+amc plan create .mission-control/runs
 amc command risk --policy policies/strict.yaml "$COMMAND_UNDER_REVIEW"
 amc report final .mission-control/runs
 ```

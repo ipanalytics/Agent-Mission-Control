@@ -8,13 +8,15 @@ Codex integration uses two repository-local files: `AGENTS.md` for stable operat
 amc agent bootstrap --target codex --root .
 amc contract validate templates/contract.yaml
 amc mission init --contract templates/contract.yaml --root /private/tmp/amc-smoke
+amc plan create /private/tmp/amc-smoke/.mission-control/runs
+amc plan goal /private/tmp/amc-smoke/.mission-control/runs
 ```
 
 ## Codex Prompt Shape
 
 ```text
 Use AGENTS.md as the repository runbook. Work inside templates/contract.yaml.
-Record command evidence, run scope check, generate final report, and replay the run before completion.
+Follow the generated PROTOCOL.md and phases. Record command evidence, run scope check, generate final report, and replay the run before completion.
 ```
 
 ## Review Path

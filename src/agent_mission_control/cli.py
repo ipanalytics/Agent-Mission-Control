@@ -10,6 +10,7 @@ from .command_risk import classify_command
 from .contracts import ContractError, load_contract
 from .evidence import add_command_evidence
 from .integrations import IntegrationError, bootstrap_agent_files
+from .planning import PlanningError, create_phase_plan, goal_prompt, plan_status
 from .policy import PolicyError, load_policy
 from .reports import final_report, pr_summary
 from .replay import replay_text
@@ -49,6 +50,16 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument("--root", default=".")
     replay = mission_sub.add_parser("replay", help="Replay a mission run")
     replay.add_argument("run_dir")
+
+    plan = subparsers.add_parser("plan", help="Create and inspect phase plans")
+    plan_sub = plan.add_subparsers(dest="plan_command")
+    plan_create = plan_sub.add_parser("create", help="Write phase files, protocol, and goal prompt")
+    plan_create.add_argument("run_dir")
+    plan_create.add_argument("--force", action="store_true")
+    plan_goal = plan_sub.add_parser("goal", help="Print the short autonomous agent goal")
+    plan_goal.add_argument("run_dir")
+    plan_status_cmd = plan_sub.add_parser("status", help="Show phase plan status")
+    plan_status_cmd.add_argument("run_dir")
 
     scope = subparsers.add_parser("scope", help="Check changed files against a contract")
     scope_sub = scope.add_subparsers(dest="scope_command")
@@ -116,6 +127,16 @@ def main(argv: list[str] | None = None) -> int:
         if args.root_command == "mission" and args.mission_command == "replay":
             _write(replay_text(args.run_dir))
             return 0
+        if args.root_command == "plan" and args.plan_command == "create":
+            paths = create_phase_plan(args.run_dir, args.force)
+            _write("\n".join(str(path) for path in paths))
+            return 0
+        if args.root_command == "plan" and args.plan_command == "goal":
+            _write(goal_prompt(args.run_dir))
+            return 0
+        if args.root_command == "plan" and args.plan_command == "status":
+            _write(plan_status(args.run_dir))
+            return 0
         if args.root_command == "scope" and args.scope_command == "check":
             contract = load_contract(args.contract)
             if args.changed_files:
@@ -159,7 +180,7 @@ def main(argv: list[str] | None = None) -> int:
             paths = bootstrap_agent_files(args.target, args.root, args.force)
             _write("\n".join(str(path) for path in paths))
             return 0
-    except (ContractError, PolicyError, RunError, IntegrationError, OSError, ValueError) as exc:
+    except (ContractError, PolicyError, RunError, IntegrationError, PlanningError, OSError, ValueError) as exc:
         return _error(str(exc))
     parser.print_help()
     return 2

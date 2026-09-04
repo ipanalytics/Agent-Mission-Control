@@ -8,13 +8,15 @@ Claude Code integration uses `CLAUDE.md` for stable project rules and a mission 
 amc agent bootstrap --target claude --root .
 amc contract validate templates/contract.yaml
 amc mission init --contract templates/contract.yaml --root /private/tmp/amc-smoke
+amc plan create /private/tmp/amc-smoke/.mission-control/runs
+amc plan goal /private/tmp/amc-smoke/.mission-control/runs
 ```
 
 ## Claude Code Prompt Shape
 
 ```text
 Follow CLAUDE.md. Treat templates/contract.yaml as the scope boundary.
-Record command evidence, run scope check, generate final report, and replay the run before completion.
+Follow the generated PROTOCOL.md and phases. Record command evidence, run scope check, generate final report, and replay the run before completion.
 ```
 
 ## Review Path

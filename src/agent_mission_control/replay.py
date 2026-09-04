@@ -15,9 +15,11 @@ def replay_text(run_dir: str | Path) -> str:
     command_evidence = read_command_evidence(resolved)
     scope_path = resolved / "evidence" / "scope-ledger.json"
     report_path = resolved / "final-report.md"
+    phase_files = sorted((resolved / "phases").glob("phase-*.md"))
     lines = [
         f"Mission replay: {resolved.name}",
         f"Status: {state.get('status', 'unknown')}",
+        f"Phases: {len(phase_files)}",
         "Events:",
     ]
     if events:
@@ -32,6 +34,11 @@ def replay_text(run_dir: str | Path) -> str:
             lines.append(f"- exit {record.get('exit_code')} risk {risk}: {record.get('command')}")
     else:
         lines.append("- warning: no command evidence")
+    if phase_files:
+        lines.append("Plan:")
+        lines.extend(f"- {path.name}" for path in phase_files)
+    else:
+        lines.append("Plan: warning: no phase files")
     if scope_path.exists():
         scope = json.loads(scope_path.read_text(encoding="utf-8"))
         lines.append(f"Scope: {len(scope.get('violations', []))} violation(s)")
@@ -42,4 +49,3 @@ def replay_text(run_dir: str | Path) -> str:
     else:
         lines.append("Final report: warning: missing")
     return "\n".join(lines) + "\n"
-
