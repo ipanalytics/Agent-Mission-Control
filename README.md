@@ -1,5 +1,7 @@
 # Agent Mission Control
 
+_Русская версия: [README.ru.md](README.ru.md)_
+
 <p align="center">
   <img src="./site/banner.svg" alt="Agent Mission Control banner" width="100%">
 </p>
